@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+<p id="alert"><%= alert %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @user.name %>
+</p>
+
+<p>
+  <strong>Email:</strong>
+  <%= @user.email %>
+</p>
+
+<p>
+	Show List<br>
+	<% if @user.tv_shows.any? %>
+		<% @user.tv_shows.each do |show| %>
+			<li>
+				<%= link_to show.title, tv_show_path(show.id) %>
+				<%= link_to 'remove', tv_show_path(show.id), method: :delete, data: {confirm: 'You sure?'} %>
+			</li>
+		<% end %>
+	<% end %>
+	<br><%= link_to 'Add a new show!', new_tv_show_path(user: @user.id) %>
+</p>
+
+
+<%= link_to 'Edit', edit_user_path(@user) %> |
+<%= link_to 'Back', users_path %>
