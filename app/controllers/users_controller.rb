@@ -6,9 +6,9 @@ class UsersController < ApplicationController
   # GET /users
   # GET /users.json
   def index
-    @users = User.all
+    @users = User.where(activated: true).paginate(page: params[:page])
     unless current_user.admin?
-      flash[:alert] = "Must be and admin to access the user index."
+      flash[:alert] = "Must be an admin to access the user index."
       redirect_back_or current_user
     end
   end
@@ -17,6 +17,7 @@ class UsersController < ApplicationController
   # GET /users/1.json
   def show
     @user = User.find(params[:id])
+    redirect_to root_url and return unless @user.activated = true
   end
 
   # GET /users/new
@@ -34,15 +35,12 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params)
 
-    respond_to do |format|
-      if @user.save
-        UserMailer.account_activation(@user).deliver_now
-        flash[:info] = "Please check your email to activate your account."
-        redirect_to root_url
-      else
-        format.html { render :new }
-        format.json { render json: @user.errors, status: :unprocessable_entity }
-      end
+    if @user.save
+      @user.send_activation_email
+      flash[:info] = "Success! Please check your email to activate your account!"
+      redirect_to root_url
+    else
+      render 'new'
     end
   end
 
