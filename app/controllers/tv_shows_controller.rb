@@ -24,33 +24,25 @@ class TvShowsController < ApplicationController
   # POST /tv_shows
   # POST /tv_shows.json
   def create
-    @user = User.find(params[:user_id])
-    show_info = ShowSearch.get_new_show(params[:tv_show][:title])
-    @tv_show = @user.tv_shows.create(title: show_info[:title].gsub('+', ' '), info: show_info[:plot], total_seasons: show_info[:total_seasons])
+    show_title = params[:title]
+    @tv_shows = TvShow.where("title LIKE '%#{show_title}%'").to_a
 
-    respond_to do |format|
-      if @tv_show.save
-        format.html { redirect_to @tv_show, notice: 'Tv show was successfully added.' }
-        format.json { render :show, status: :created, location: @tv_show }
-      else
-        format.html { render :new }
-        format.json { render json: @tv_show.errors, status: :unprocessable_entity }
-      end
+    if @tv_shows.empty?
+      show_info = ShowSearch.get_new_show(show_title)
+      @tv_shows << TvShow.create(
+        title: show_info[:title].gsub('+', ' '),
+        info: show_info[:plot],
+        total_seasons: show_info[:total_seasons],
+        total_episodes: show_info[:total_episodes]
+      )
     end
+
+    redirect_to new_user_show_path(user: params[:user_id], tv_shows: @tv_shows)
   end
 
   # PATCH/PUT /tv_shows/1
   # PATCH/PUT /tv_shows/1.json
   def update
-    respond_to do |format|
-      if @tv_show.update(tv_show_params)
-        format.html { redirect_to @tv_show, notice: 'Tv show was successfully updated.' }
-        format.json { render :show, status: :ok, location: @tv_show }
-      else
-        format.html { render :edit }
-        format.json { render json: @tv_show.errors, status: :unprocessable_entity }
-      end
-    end
   end
 
   # DELETE /tv_shows/1

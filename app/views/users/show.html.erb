@@ -10,11 +10,11 @@
 
 <p>
 	Show List<br>
-	<% if @user.tv_shows.any? %>
-		<% @user.tv_shows.each do |show| %>
+	<% if @user.user_shows.any? %>
+		<% @user.user_shows.each do |show| %>
 			<li>
-				<%= link_to show.title, tv_show_path(show.id) %>
-				<%= link_to 'remove', tv_show_path(show.id), method: :delete, data: {confirm: 'You sure?'} %>
+				<%= link_to show.title, user_show_path(show.id) %>
+				<%= link_to 'remove', user_show_path(show.id), method: :delete, data: {confirm: 'You sure?'} %>
 			</li>
 		<% end %>
 	<% end %>

@@ -4,7 +4,7 @@ class User < ActiveRecord::Base
   before_save   :downcase_email
   before_create :create_activation_digest
 
-	has_many :tv_shows, inverse_of: :user, dependent: :destroy
+	has_many :user_shows, inverse_of: :user, dependent: :destroy
 
 	before_save { email.downcase! }
 	validates :name, presence: true, length: { maximum: 50 }
